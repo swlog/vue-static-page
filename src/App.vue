@@ -1,13 +1,13 @@
 <template>
   <main class="app">
-    <!-- 배경 -->
+    <!-- 🌌 배경 -->
     <div class="sky-gradient"></div>
     <div class="stars"></div>
     <div class="cloud cloud-1" aria-hidden="true"></div>
     <div class="cloud cloud-2" aria-hidden="true"></div>
 
     <!-- 🌕 달 & 토끼 -->
-    <section class="hero" role="img" aria-label="보름달과 토끼 실루엣">
+    <section class="hero">
       <div class="moon">
         <svg class="rabbit" viewBox="0 0 120 120" aria-hidden="true">
           <path
@@ -33,10 +33,10 @@
       </div>
     </section>
 
-    <!-- 🏮 떠다니는 등불 -->
-    <transition-group name="lantern" tag="div" class="lantern-wrap" v-if="lanternOn">
+    <!-- 🏮 연등 켜면 밑에서 위로 떠오름 -->
+    <div v-if="lanternOn" class="lantern-wrap">
       <div
-          v-for="n in 6"
+          v-for="n in 8"
           :key="n"
           class="lantern"
           :style="lanternStyle(n)"
@@ -46,7 +46,7 @@
         <div class="lantern-light"></div>
         <div class="lantern-tail"></div>
       </div>
-    </transition-group>
+    </div>
 
     <!-- ✨ 덕담 섹션 -->
     <section class="wishes" ref="wishesRef">
@@ -81,7 +81,7 @@ import { ref } from "vue"
 
 type Wish = { id: number; text: string }
 
-const lanternOn = ref(true)
+const lanternOn = ref(false)
 const wishes = ref<Wish[]>([
   { id: 1, text: "보름달처럼 넉넉한 마음 가득하시길!" },
   { id: 2, text: "멀리 있어도 마음만은 한가위에 함께해요 🌕" }
@@ -94,8 +94,8 @@ function toggleLanterns() {
 }
 
 function lanternStyle(n: number) {
-  const delay = `${n * 0.6}s`
-  const left = `${10 + n * 12}%`
+  const delay = `${n * 1.2}s`
+  const left = `${10 + n * 10}%`
   const scale = 0.8 + (n % 3) * 0.1
   return {
     left,
@@ -121,17 +121,14 @@ function removeWish(index: number) {
 
 <style scoped>
 /* ===========================
-    전체 레이아웃 & 배경
+   전체 배경
 =========================== */
 .app {
   min-height: 100vh;
-  color: #f8f8fb;
   background: #0a0b18;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  color: #f8f8fb;
 }
 
-/* 하늘 그라데이션 + 별 */
 .sky-gradient {
   position: fixed;
   inset: 0;
@@ -143,41 +140,20 @@ function removeWish(index: number) {
   position: fixed;
   inset: 0;
   background:
-      radial-gradient(1px 1px at 10% 20%, #ffffff 90%, transparent) repeat,
-      radial-gradient(1px 1px at 80% 40%, #fff6cc 90%, transparent) repeat,
-      radial-gradient(1px 1px at 50% 70%, #ffffff 90%, transparent) repeat;
+      radial-gradient(1px 1px at 10% 20%, #ffffff 90%, transparent),
+      radial-gradient(1px 1px at 80% 40%, #fff6cc 90%, transparent),
+      radial-gradient(1px 1px at 50% 70%, #ffffff 90%, transparent);
   background-size: 600px 600px;
   animation: twinkle 8s linear infinite;
   z-index: -2;
 }
-
 @keyframes twinkle {
   0%, 100% { opacity: 0.9; }
   50% { opacity: 0.6; }
 }
 
-/* 구름 */
-.cloud {
-  position: absolute;
-  top: 20%;
-  width: 240px;
-  height: 70px;
-  background: radial-gradient(closest-side, #fff, #fff2);
-  border-radius: 50px;
-  filter: blur(4px);
-  animation: float 80s linear infinite;
-  z-index: -1;
-}
-.cloud-1 { left: -20%; animation-delay: 0s; }
-.cloud-2 { top: 40%; left: -30%; animation-delay: 20s; }
-
-@keyframes float {
-  from { transform: translateX(0); }
-  to { transform: translateX(120vw); }
-}
-
 /* ===========================
-    달 & 토끼
+   달 & 토끼
 =========================== */
 .moon {
   width: clamp(180px, 28vw, 320px);
@@ -187,14 +163,6 @@ function removeWish(index: number) {
   background: radial-gradient(circle at 35% 35%, #fff5d6 0%, #ffe58a 50%, #ffd27d 70%, #fbc266 80%);
   box-shadow: 0 0 40px rgba(255, 207, 100, 0.6);
   position: relative;
-}
-.moon::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 25% 30%, #e9b86a 10%, transparent 20%);
-  mix-blend-mode: multiply;
 }
 .rabbit {
   position: absolute;
@@ -206,48 +174,50 @@ function removeWish(index: number) {
 }
 
 /* ===========================
-    타이틀 & 버튼
+   버튼 스타일 (금빛 테마)
 =========================== */
-.title {
-  text-align: center;
-  font-weight: 800;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  line-height: 1.3;
-  text-shadow: 0 2px 10px rgba(255, 220, 120, 0.3);
-  margin-top: 2rem;
-}
-.subtitle {
-  text-align: center;
-  opacity: 0.85;
-  margin-bottom: 1.5rem;
-}
-
 .actions {
   display: flex;
   justify-content: center;
   gap: 1rem;
   margin-bottom: 3rem;
 }
+
 .btn {
-  background: #ffcc66;
-  color: #231a02;
+  background: linear-gradient(90deg, #ffcc66, #ffb84d);
+  color: #1e1400;
   border: none;
   border-radius: 999px;
-  padding: 0.7rem 1.6rem;
+  padding: 0.8rem 1.8rem;
   font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
-  transition: 0.2s;
+  box-shadow: 0 4px 12px rgba(255, 204, 102, 0.4);
+  transition: all 0.25s ease;
 }
-.btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(255, 204, 102, 0.6);
+  filter: brightness(1.05);
+}
+.btn.small {
+  padding: 0.6rem 1.4rem;
+  font-size: 0.9rem;
+}
 .btn.outline {
   background: transparent;
   color: #ffcc66;
   border: 2px solid #ffcc66;
+  box-shadow: none;
 }
-.btn.small { padding: 0.5rem 1rem; font-size: 0.9rem; }
+.btn.outline:hover {
+  background: #ffcc66;
+  color: #1e1400;
+  box-shadow: 0 6px 14px rgba(255, 204, 102, 0.4);
+}
 
 /* ===========================
-    등불 애니메이션
+   등불 (10초 고정 속도)
 =========================== */
 .lantern-wrap {
   position: relative;
@@ -258,11 +228,13 @@ function removeWish(index: number) {
   bottom: 0;
   width: 60px;
   height: 90px;
-  animation: rise 14s linear infinite;
+  animation: rise 10s linear infinite; /* ✅ 속도 10초로 변경됨 */
+  opacity: 0;
 }
 @keyframes rise {
-  from { transform: translateY(100vh) scale(1); opacity: 0.8; }
-  to { transform: translateY(-120vh) scale(1.2); opacity: 0; }
+  0% { transform: translateY(100vh) scale(1); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(-130vh) scale(1.2); opacity: 0; }
 }
 .lantern-body {
   width: 100%;
@@ -291,7 +263,7 @@ function removeWish(index: number) {
 }
 
 /* ===========================
-    덕담 섹션
+   덕담 섹션
 =========================== */
 .wishes {
   padding: 3rem 2rem;
@@ -301,7 +273,7 @@ function removeWish(index: number) {
 }
 .wishes h2 {
   color: #ffcc66;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 800;
   margin-bottom: 1rem;
 }
@@ -313,15 +285,19 @@ function removeWish(index: number) {
 }
 .input {
   padding: 0.8rem 1rem;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #ffcc6633;
   background: #12121f;
   color: #fff;
+  transition: 0.2s;
 }
-.input::placeholder {
-  color: #aaa;
-  opacity: 0.7;
+.input:focus {
+  outline: none;
+  border-color: #ffcc66;
+  box-shadow: 0 0 8px rgba(255, 204, 102, 0.3);
 }
+.input::placeholder { color: #aaa; opacity: 0.7; }
+
 .wish-list {
   display: grid;
   gap: 0.5rem;
@@ -330,10 +306,10 @@ function removeWish(index: number) {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   background: #101020;
-  border-radius: 8px;
-  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
   border: 1px solid #ffffff22;
 }
 .wish-item .text { opacity: 0.95; }
@@ -342,9 +318,12 @@ function removeWish(index: number) {
   border: none;
   color: #ffcc66;
   cursor: pointer;
+  font-size: 1rem;
 }
 
-/* 푸터 */
+/* ===========================
+   푸터
+=========================== */
 .footer {
   text-align: center;
   padding: 1rem;
